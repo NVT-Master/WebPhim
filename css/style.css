@@ -1,0 +1,334 @@
+body {
+  background: linear-gradient(135deg, #0f0f0f 0%, #2d3436 100%);
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(45, 52, 54, 0.9));
+  padding: 0.5rem 1rem;
+  border-bottom: 2px solid #ffbb00ff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(255, 111, 97, 0.3);
+  transition: all 0.3s ease;
+}
+
+.navbar.scrolled {
+  background: rgba(0, 0, 0, 0.95);
+  padding: 0.3rem 1rem;
+}
+
+.navbar-brand {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ffbb00ff !important;
+  text-shadow: 1px 1px 6px rgba(255, 111, 97, 0.4);
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand i {
+  margin-right: 0.5rem;
+  animation: spin 2s linear infinite;
+}
+
+.nav-link {
+  color: #fff !important;
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+}
+
+.nav-link i {
+  margin-right: 0.3rem;
+}
+
+.nav-link:hover {
+  color: #ffbb00ff !important;
+  background: rgba(255, 187, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.navbar-toggler {
+  border: none;
+  padding: 0.2rem 0.4rem;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 187, 0, 1)' stroke-width='2' stroke-linecap='round' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.form-control {
+  border-radius: 20px;
+  border: 2px solid #ffbb00ff;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  /* chữ nhập vào sẽ trắng */
+  font-size: 0.9rem;
+  height: 38px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  /* giữ trắng khi focus */
+  box-shadow: 0 0 8px rgba(255, 111, 97, 0.4);
+}
+
+.form-control::placeholder {
+  color: #ccc;
+  /* placeholder xám sáng */
+}
+
+.btn-search {
+  background: #ffbb00ff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.4rem 1.2rem;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  margin-left: 0.5rem;
+}
+
+.btn-search:hover {
+  background: #e65b50;
+  transform: scale(1.05);
+}
+
+.auth-buttons .nav-link {
+  padding: 0.4rem 1rem;
+  margin-left: 0.5rem;
+  background: rgba(255, 187, 0, 0.1);
+}
+
+.auth-buttons .nav-link:hover {
+  background: rgba(255, 187, 0, 0.2);
+}
+
+/* Banner */
+.carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-item img {
+  height: 650px;
+  object-fit: cover;
+  filter: brightness(50%);
+}
+
+.carousel-caption {
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: left;
+  padding-left: 8%;
+}
+
+.carousel-caption h2 {
+  font-size: 4rem;
+  font-weight: 800;
+  text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.8);
+  animation: fadeInDown 1s ease-out;
+}
+
+.carousel-caption p {
+  font-size: 1.5rem;
+  color: #ddd;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+  animation: fadeInUp 1s ease-out 0.5s backwards;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Movie Grid */
+.movie-grid {
+  padding: 60px 20px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.movie-card {
+  background: #2d3436;
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.movie-card:hover {
+  transform: translateY(-15px);
+  box-shadow: 0 15px 30px rgba(255, 254, 254, 1);
+}
+
+.movie-card img {
+  height: 350px;
+  object-fit: cover;
+  border-bottom: 3px solid #ffbb00ff;
+}
+
+.movie-card .card-body {
+  background: #222;
+  padding: 1.8rem;
+}
+
+.movie-card .card-title {
+  font-size: 1.5rem;
+  color: #ffbb00ff;
+  margin-bottom: 0.7rem;
+}
+
+.movie-card .card-text {
+  font-size: 1rem;
+  color: #bbb;
+}
+
+.btn-book {
+  background: #ffbb00ff;
+  border: none;
+  padding: 0.7rem 2rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.btn-book:hover {
+  background: #fff;
+  transform: scale(1.1);
+}
+
+/* Footer */
+footer {
+  background: #1a1a1a;
+  padding: 2.5rem 0;
+  border-top: 3px solid #ffbb00ff;
+  margin-top: 60px;
+}
+
+footer p {
+  margin: 0;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .form-control {
+    height: 34px;
+    font-size: 0.85rem;
+  }
+
+  .btn-search {
+    padding: 0.3rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .carousel-caption h2 {
+    font-size: 2.5rem;
+  }
+
+  .carousel-caption p {
+    font-size: 1.2rem;
+  }
+
+  .movie-card img {
+    height: 250px;
+  }
+
+  .movie-card .card-title {
+    font-size: 1.2rem;
+  }
+
+  .auth-buttons .nav-link {
+    padding: 0.3rem 0.8rem;
+    margin-left: 0.3rem;
+  }
+}
+
+/* Mặc định dark */
+body.dark-mode {
+  background: linear-gradient(135deg, #0f0f0f 0%, #2d3436 100%);
+  color: #ffffffff;
+}
+
+/* Light mode */
+body.light-mode {
+  background: #ffffffff;
+  color: #000000ff;
+}
+
+body.light-mode .navbar {
+  background: #ffffffff !important;
+  border-bottom: 2px solid #ffbb00ff;
+}
+
+body.light-mode .nav-link {
+  color: #000000ff !important;
+}
+
+body.light-mode .movie-card {
+  background: #ffffffff;
+  color: #212529;
+}
+
+body.light-mode .movie-card .card-body {
+  background: #ffffffff;
+}
+
+body.light-mode footer {
+  background: #ffffffff;
+  border-top: 3px solid #ffbb00ff;
+  color: #000000ff;
+}
+
+/* Làm chữ đậm và tối hơn khi ở light-mode */
+body.light-mode .movie-card .card-title {
+  color: #111111;
+  font-weight: 500;
+}
+
+body.light-mode .movie-card .card-text {
+  color: #333333;
+  font-weight: 400;
+}

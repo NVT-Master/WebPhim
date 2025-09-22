@@ -1,0 +1,29 @@
+README.md
+
+# Hệ điều hành
+.DS_Store
+Thumbs.db
+
+# XAMPP hoặc môi trường
+*.log
+*.tmp
+*.bak
+
+# Composer
+/vendor/
+/composer.lock
+
+# NodeJS (nếu có)
+/node_modules/
+/package-lock.json
+
+# Env file (nếu có)
+/.env
+
+# Cache
+/cache/
+/*.cache
+
+# IDE (VSCode, PhpStorm...)
+.vscode/
+.idea/
