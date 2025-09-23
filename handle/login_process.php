@@ -28,7 +28,7 @@ if ($stmt->fetch()) {
         $_SESSION['name'] = $name;
         $_SESSION['role'] = $role;
         // Đường dẫn tuyệt đối về trang chủ
-        header("Location: /WebPhim/index.php");
+        header("Location: ../index.php");
         exit;
     } else {
         $_SESSION['error'] = "Sai mật khẩu!";
@@ -36,7 +36,7 @@ if ($stmt->fetch()) {
 } else {
     $_SESSION['error'] = "Tên hoặc Email không tồn tại!";
 }
-header("Location: /WebPhim/views/auth/login.php");
+header("Location: ../views/auth/login.php");
 exit;
 ?>
-<form method="POST" action="/WebPhim/handle/login_process.php">
+<form method="POST" action="../../handle/login_process.php">

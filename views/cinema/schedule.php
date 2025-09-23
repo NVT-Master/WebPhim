@@ -4,24 +4,63 @@ require_once '../../functions/db_connection.php';
 
 $conn = getDbConnection();
 
-// Lấy danh sách lịch chiếu với cột start_time
+// Lấy danh sách lịch chiếu + thông tin phim
 $sql = "SELECT 
-    s.id AS show_id, s.start_time, s.price, 
-    m.title, m.poster_url,
+    s.id AS show_id, s.start_time, s.price, s.room_id,
+    m.id AS movie_id, m.title, m.poster_url,
     r.name AS room_name,
     t.name AS theater_name
 FROM showtimes s
 JOIN movies m ON s.movie_id = m.id
 JOIN rooms r ON s.room_id = r.id
 JOIN theaters t ON r.theater_id = t.id
-ORDER BY s.start_time ASC";
-$stmt = $conn->prepare($sql);
+ORDER BY m.id, s.start_time ASC";
+
 $result = $conn->query($sql);
 
-if (!$result) {
-    die("Lỗi query: " . $conn->error);
+// Gom nhóm theo movie_id
+$movies = [];
+while ($row = $result->fetch_assoc()) {
+    $movie_id = $row['movie_id'];
+    if (!isset($movies[$movie_id])) {
+        $movies[$movie_id] = [
+            'title' => $row['title'],
+            'poster_url' => $row['poster_url'],
+            'showtimes' => []
+        ];
+    }
+
+    // Tính số ghế
+    $show_id = $row['show_id'];
+
+    // Tổng ghế
+    $stmt_total = $conn->prepare("SELECT COUNT(*) as total FROM seats WHERE room_id = ?");
+    $stmt_total->bind_param("i", $row['room_id']);
+    $stmt_total->execute();
+    $total_seats = $stmt_total->get_result()->fetch_assoc()['total'];
+
+    // Ghế đã đặt
+    $stmt_booked = $conn->prepare("SELECT COUNT(DISTINCT bi.seat_id) as booked 
+        FROM booking_items bi 
+        JOIN bookings b ON bi.booking_id = b.id 
+        WHERE b.showtime_id = ? AND b.status IN ('PENDING', 'CONFIRMED')");
+    $stmt_booked->bind_param("i", $show_id);
+    $stmt_booked->execute();
+    $booked_seats = $stmt_booked->get_result()->fetch_assoc()['booked'];
+
+    $available_seats = $total_seats - $booked_seats;
+
+    $movies[$movie_id]['showtimes'][] = [
+        'show_id' => $show_id,
+        'start_time' => $row['start_time'],
+        'price' => $row['price'],
+        'theater_name' => $row['theater_name'],
+        'room_name' => $row['room_name'],
+        'available_seats' => $available_seats > 0 ? $available_seats : 0
+    ];
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -35,11 +74,32 @@ if (!$result) {
     <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        html,
         body {
+            height: 100%;
+            margin: 0;
             background: linear-gradient(135deg, #0f0f0f 0%, #2d3436 100%);
             color: #fff;
-            font-family: 'Poppins', sans-serif;
+            font-family: "Poppins", sans-serif;
             overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
         }
 
         .navbar {
@@ -282,7 +342,8 @@ if (!$result) {
                     </form>
                     <div class="auth-buttons">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                            <a class="nav-link" href="../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i> Đăng
+                            <a class="nav-link" href="../../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i>
+                                Đăng
                                 xuất</a>
                         <?php else: ?>
                             <a class="nav-link" href="../auth/login.php"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
@@ -298,42 +359,50 @@ if (!$result) {
     <div class="schedule-table">
         <div class="container">
             <h2 class="text-center mb-5" data-aos="fade-up">📅 Lịch Chiếu Phim</h2>
-            <?php if ($result->num_rows > 0): ?>
-                <?php while ($row = $result->fetch_assoc()): ?>
+            <?php if (!empty($movies)): ?>
+                <?php foreach ($movies as $movie): ?>
                     <div class="schedule-card" data-aos="fade-up">
                         <div class="row">
                             <div class="col-md-4">
-                                <img src="../../images/posters/<?= htmlspecialchars($row['poster_url']) ?>"
-                                    class="img-fluid rounded" alt="<?= htmlspecialchars($row['title']) ?>"
+                                <img src="../../images/posters/<?= htmlspecialchars($movie['poster_url']) ?>"
+                                    class="img-fluid rounded" alt="<?= htmlspecialchars($movie['title']) ?>"
                                     style="max-height: 250px; object-fit: cover;">
                             </div>
                             <div class="col-md-8">
-                                <h5 class="card-title"><?= htmlspecialchars($row['title']) ?></h5>
-                                <p class="card-text">Thời gian: <?= date('H:i d/m/Y', strtotime($row['start_time'])) ?></p>
-                                <p class="card-text">Rạp: <?= htmlspecialchars($row['theater_name']) ?> -
-                                    <?= htmlspecialchars($row['room_name']) ?></p>
-                                <p class="card-text">Giá vé: <?= number_format($row['price'], 0) ?> VND</p>
-                                <p class="card-text">Ghế trống: 50 (Tạm thời)</p>
-
-                                <a href="book.php?show_id=<?= htmlspecialchars($row['show_id']) ?>" class="btn btn-book">
-                                    Đặt vé
-                                </a>
-
+                                <h5 class="card-title"><?= htmlspecialchars($movie['title']) ?></h5>
+                                <div class="mt-3">
+                                    <?php foreach ($movie['showtimes'] as $show): ?>
+                                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                            <span>
+                                                🕒 <?= date('H:i d/m/Y', strtotime($show['start_time'])) ?> |
+                                                🎬 <?= htmlspecialchars($show['theater_name']) ?> -
+                                                <?= htmlspecialchars($show['room_name']) ?>
+                                            </span>
+                                            <span>
+                                                💰 <?= number_format($show['price'], 0) ?> VND |
+                                                🎟 Ghế trống: <?= $show['available_seats'] ?>
+                                            </span>
+                                            <a href="book.php?show_id=<?= $show['show_id'] ?>" class="btn btn-sm btn-book">
+                                                Đặt vé
+                                            </a>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
                         </div>
                     </div>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             <?php else: ?>
                 <p class="text-center">Không có lịch chiếu nào được tìm thấy.</p>
             <?php endif; ?>
         </div>
     </div>
-
+    
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved. | <a href="contact.php"
-                    style="color: #ffbb00ff;">Liên hệ</a></p>
+            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved.
+                | <a href="../../views/contact.php" style="color: #ffbb00ff;">Liên hệ</a></p>
         </div>
     </footer>
 

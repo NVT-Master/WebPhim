@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../functions/db_connection.php';
+require_once __DIR__ . '/../../libs/phpqrcode.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
@@ -12,9 +13,10 @@ $booking_id = isset($_GET['booking_id']) ? (int) $_GET['booking_id'] : 0;
 $conn = getDbConnection();
 $conn->set_charset('utf8mb4');
 
-// Lấy thông tin booking, suất chiếu, phim và ghế
+// Lấy thông tin booking
 $stmt = $conn->prepare("
-    SELECT b.id AS booking_id, b.total_amount, s.start_time, m.title, GROUP_CONCAT(se.row_label, se.seat_number SEPARATOR ', ') AS seats
+    SELECT b.id AS booking_id, b.total_amount, s.start_time, m.title, 
+           GROUP_CONCAT(se.row_label, se.seat_number SEPARATOR ', ') AS seats
     FROM bookings b
     JOIN showtimes s ON b.showtime_id = s.id
     JOIN movies m ON s.movie_id = m.id
@@ -31,9 +33,17 @@ $conn->close();
 
 if (!$booking) {
     $_SESSION['error'] = "Không tìm thấy booking.";
-    header("Location: ../views/cinema/my_tickets.php");
+    header("Location: my_tickets.php");
     exit();
 }
+
+// ✅ Tạo QR code
+$qrData = "Thanh toán booking #" . $booking['booking_id'] . " - Số tiền: " . $booking['total_amount'] . " VND";
+$qrFile = __DIR__ . "/../../images/qrcodes/booking_" . $booking['booking_id'] . ".png";
+if (!file_exists(dirname($qrFile))) {
+    mkdir(dirname($qrFile), 0777, true);
+}
+QRcode::png($qrData, $qrFile, QR_ECLEVEL_L, 6);
 ?>
 
 <!DOCTYPE html>
@@ -81,8 +91,8 @@ if (!$booking) {
                     </form>
                     <div class="auth-buttons">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                            <a class="nav-link" href="../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i> Đăng
-                                xuất</a>
+                            <a class="nav-link" href="../../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i>
+                                Đăng xuất</a>
                         <?php else: ?>
                             <a class="nav-link" href="../auth/login.php"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
                             <a class="nav-link" href="../auth/register.php"><i class="fas fa-user-plus"></i> Đăng ký</a>
@@ -97,15 +107,24 @@ if (!$booking) {
     <div class="movie-grid" data-aos="fade-up">
         <div class="container">
             <h2 class="text-center mb-5">💳 Thanh Toán</h2>
-            <div class="card movie-card shadow-sm">
-                <div class="card-body">
+            <div class="card movie-card shadow-sm p-4">
+                <div class="card-body text-center">
                     <p class="card-text"><strong>Phim:</strong> <?= htmlspecialchars($booking['title']) ?></p>
                     <p class="card-text"><strong>Thời gian:</strong>
                         <?= date('H:i d/m/Y', strtotime($booking['start_time'])) ?></p>
                     <p class="card-text"><strong>Ghế đã chọn:</strong> <?= htmlspecialchars($booking['seats']) ?></p>
                     <p class="card-text"><strong>Tổng tiền:</strong>
                         <?= number_format($booking['total_amount'], 0, ',', '.') ?> VND</p>
-                    <form method="POST" action="handle/payment_process.php">
+
+                    <!-- QR Code -->
+                    <div class="my-4">
+                        <p>👉 Quét mã QR để thanh toán</p>
+                        <img src="../../images/qrcodes/booking_<?= $booking['booking_id'] ?>.png" alt="QR Code"
+                            class="img-fluid" style="max-width:200px;">
+                    </div>
+
+                    <!-- Nút xác nhận -->
+                    <form method="POST" action="../../handle/payment_process.php">
                         <input type="hidden" name="booking_id" value="<?= $booking['booking_id'] ?>">
                         <button type="submit" class="btn btn-warning w-100 mt-3">Xác Nhận Thanh Toán</button>
                     </form>
@@ -114,11 +133,11 @@ if (!$booking) {
         </div>
     </div>
 
-    <!-- Footer giống trang chủ -->
-    <footer class="bg-dark text-light py-3 mt-5">
+    <!-- Footer -->
+    <footer class="mt-5">
         <div class="container text-center">
-            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved. | <a href="../contact.php"
-                    style="color: #ffbb00;">Liên hệ</a></p>
+            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved.
+                | <a href="../../views/contact.php" style="color: #ffbb00ff;">Liên hệ</a></p>
         </div>
     </footer>
 

@@ -11,6 +11,25 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $conn = getDbConnection();
 
+// Nếu người dùng nhấn huỷ vé
+if (isset($_POST['cancel_booking'])) {
+    $booking_id = intval($_POST['booking_id']);
+
+    // Xoá trong booking_items trước (liên kết khoá ngoại)
+    $stmt = $conn->prepare("DELETE FROM booking_items WHERE booking_id = ?");
+    $stmt->bind_param("i", $booking_id);
+    $stmt->execute();
+
+    // Xoá trong bookings
+    $stmt = $conn->prepare("DELETE FROM bookings WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $booking_id, $user_id);
+    $stmt->execute();
+
+    // Redirect để tránh submit lại form
+    header("Location: my_tickets.php");
+    exit;
+}
+
 // Lấy danh sách vé của user
 $sql = "SELECT b.id AS booking_id, b.created_at, b.status,
                s.start_time, s.price,
@@ -44,10 +63,32 @@ $result = $stmt->get_result();
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="../../css/style.css" rel="stylesheet">
     <style>
+        html,
         body {
+            height: 100%;
+            margin: 0;
             background: linear-gradient(135deg, #0f0f0f 0%, #2d3436 100%);
             color: #fff;
-            font-family: 'Poppins', sans-serif;
+            font-family: "Poppins", sans-serif;
+            overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
         }
 
         .ticket-card {
@@ -56,20 +97,28 @@ $result = $stmt->get_result();
             overflow: hidden;
             margin-bottom: 20px;
             transition: all 0.3s ease;
-        }
-
-        .ticket-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(255, 187, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            /* đổi thành card dọc */
+            height: auto;
         }
 
         .ticket-card img {
-            height: 200px;
+            width: 100%;
+            height: 180px;
+            /* ảnh vừa khung */
             object-fit: cover;
+            /* cắt ảnh để vừa */
         }
 
         .ticket-info {
             padding: 15px;
+        }
+
+
+        .ticket-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255, 187, 0, 0.3);
         }
 
         .ticket-info h5 {
@@ -95,6 +144,20 @@ $result = $stmt->get_result();
         .status.CANCELLED {
             background: #dc3545;
             color: #fff;
+        }
+
+        .cancel-btn {
+            background: #dc3545;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .cancel-btn:hover {
+            background: #b52a37;
         }
     </style>
 </head>
@@ -123,15 +186,10 @@ $result = $stmt->get_result();
                     <?php endif; ?>
                 </ul>
                 <div class="d-flex align-items-center">
-                    <form class="d-flex me-2" method="GET" action="../index.php">
-                        <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm..."
-                            value="<?= htmlspecialchars($search ?? '') ?>">
-                        <button class="btn btn-search" type="submit"><i class="fas fa-search"></i></button>
-                    </form>
                     <div class="auth-buttons">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                            <a class="nav-link" href="../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i> Đăng
-                                xuất</a>
+                            <a class="nav-link" href="../../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i>
+                                Đăng xuất</a>
                         <?php else: ?>
                             <a class="nav-link" href="../auth/login.php"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
                             <a class="nav-link" href="../auth/register.php"><i class="fas fa-user-plus"></i> Đăng ký</a>
@@ -148,18 +206,26 @@ $result = $stmt->get_result();
             <div class="row">
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <div class="col-md-6">
-                        <div class="ticket-card d-flex">
+                        <div class="ticket-card">
                             <img src="../../images/posters/<?= htmlspecialchars($row['poster_url']) ?>"
-                                alt="<?= htmlspecialchars($row['title']) ?>" class="w-50">
-                            <div class="ticket-info w-50">
-                                <h5><?= htmlspecialchars($row['title']) ?></h5>
-                                <p>⏰ <?= date('H:i d/m/Y', strtotime($row['start_time'])) ?></p>
-                                <p>🎬 <?= htmlspecialchars($row['theater_name']) ?> - <?= htmlspecialchars($row['room_name']) ?>
-                                </p>
-                                <p>💺 Ghế: <?= htmlspecialchars($row['seats']) ?></p>
-                                <p>💵 Giá vé: <?= number_format($row['price'], 0) ?> VND</p>
-                                <p>📅 Đặt ngày: <?= date('d/m/Y H:i', strtotime($row['created_at'])) ?></p>
-                                <span class="status <?= $row['status'] ?>"><?= $row['status'] ?></span>
+                                alt="<?= htmlspecialchars($row['title']) ?>">
+                            <div class="ticket-info">
+                                <div>
+                                    <h5><?= htmlspecialchars($row['title']) ?></h5>
+                                    <p>⏰ <?= date('H:i d/m/Y', strtotime($row['start_time'])) ?></p>
+                                    <p>🎬 <?= htmlspecialchars($row['theater_name']) ?> -
+                                        <?= htmlspecialchars($row['room_name']) ?></p>
+                                    <p>💺 Ghế: <?= htmlspecialchars($row['seats']) ?></p>
+                                    <p>💵 Giá vé: <?= number_format($row['price'], 0) ?> VND</p>
+                                    <p>📅 Đặt ngày: <?= date('d/m/Y H:i', strtotime($row['created_at'])) ?></p>
+                                    <span class="status <?= $row['status'] ?>"><?= $row['status'] ?></span>
+                                </div>
+                                <form method="POST" onsubmit="return confirm('Bạn có chắc muốn huỷ vé này không?');">
+                                    <input type="hidden" name="booking_id" value="<?= $row['booking_id'] ?>">
+                                    <button type="submit" name="cancel_booking" class="cancel-btn mt-2">
+                                        <i class="fas fa-times"></i> Huỷ vé
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -170,6 +236,13 @@ $result = $stmt->get_result();
         <?php endif; ?>
     </div>
 
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved.
+                | <a href="../../views/contact.php" style="color: #ffbb00ff;">Liên hệ</a></p>
+        </div>
+    </footer>
 </body>
 
 </html>

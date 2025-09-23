@@ -29,10 +29,32 @@ unset($_SESSION['success'], $_SESSION['errors']);
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="../../css/style.css" rel="stylesheet">
     <style>
+        html,
         body {
-            font-family: 'Poppins', sans-serif;
+            height: 100%;
+            margin: 0;
             background: linear-gradient(135deg, #0f0f0f 0%, #2d3436 100%);
             color: #fff;
+            font-family: "Poppins", sans-serif;
+            overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
         }
 
         .navbar {
@@ -206,12 +228,15 @@ unset($_SESSION['success'], $_SESSION['errors']);
                             lý Phim</a></li>
                     <li class="nav-item"><a class="nav-link" href="manage_showtimes.php"><i
                                 class="fas fa-calendar-alt"></i> Quản Lịch Chiếu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="manage_rooms.php"><i class="fas fa-door-open"></i>
+                            Quản lý Phòng</a></li>
                     <li class="nav-item"><a class="nav-link" href="manage_users.php"><i class="fas fa-users"></i> Người
                             Dùng</a></li>
                 </ul>
                 <div class="d-flex align-items-center">
                     <div class="auth-buttons">
-                        <a class="nav-link" href="../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i> Đăng
+                        <a class="nav-link" href="../../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i>
+                            Đăng
                             xuất</a>
                     </div>
                 </div>
@@ -223,6 +248,7 @@ unset($_SESSION['success'], $_SESSION['errors']);
             </li>
         </div>
     </nav>
+
 
     <!-- HTML... -->
     <div class="container my-5">
@@ -293,7 +319,13 @@ unset($_SESSION['success'], $_SESSION['errors']);
             </table>
         </div>
     </div>
-
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved.
+                | <a href="../../views/contact.php" style="color: #ffbb00ff;">Liên hệ</a></p>
+        </div>
+    </footer>
     <script>
         // Tự ẩn thông báo sau 3 giây
         const alertMessage = document.getElementById('alertMessage');

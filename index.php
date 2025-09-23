@@ -32,11 +32,32 @@ if (isset($_GET['search']) && $_GET['search'] !== "") {
     <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        html,
         body {
+            height: 100%;
+            margin: 0;
             background: linear-gradient(135deg, #0f0f0f 0%, #2d3436 100%);
             color: #fff;
-            font-family: 'Poppins', sans-serif;
+            font-family: "Poppins", sans-serif;
             overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
         }
 
         /* Navbar */
@@ -406,7 +427,8 @@ if (isset($_GET['search']) && $_GET['search'] !== "") {
                                 class="fas fa-calendar-alt"></i> Lịch Chiếu</a></li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <?php if ($_SESSION['role'] === 'ADMIN'): ?>
-                            <li class="nav-item"><a class="nav-link" href="views/admin/index.php"><i class="fas fa-cog"></i>Quản lý</a></li>
+                            <li class="nav-item"><a class="nav-link" href="views/admin/index.php"><i class="fas fa-cog"></i>Quản
+                                    lý</a></li>
                         <?php endif; ?>
                         <li class="nav-item"><a class="nav-link" href=" views/cinema/my_tickets.php"><i
                                     class="fas fa-ticket-alt"></i> Vé Của Tôi</a></li>
@@ -420,11 +442,14 @@ if (isset($_GET['search']) && $_GET['search'] !== "") {
                     </form>
                     <div class="auth-buttons">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                            <a class="nav-link" href="handle/logout_process.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                            <a class="nav-link" href="handle/logout_process.php"><i class="fas fa-sign-out-alt"></i> Đăng
+                                xuất</a>
                         <?php else: ?>
                             <div class="d-flex">
-                                <a class="nav-link me-2" href="views/auth/login.php"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
-                                <a class="nav-link" href="views/auth/register.php"><i class="fas fa-user-plus"></i> Đăng ký</a>
+                                <a class="nav-link me-2" href="views/auth/login.php"><i class="fas fa-sign-in-alt"></i> Đăng
+                                    nhập</a>
+                                <a class="nav-link" href="views/auth/register.php"><i class="fas fa-user-plus"></i> Đăng
+                                    ký</a>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -508,8 +533,8 @@ if (isset($_GET['search']) && $_GET['search'] !== "") {
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved. | <a href="views/contact.php"
-                    style="color: #ffbb00ff;">Liên hệ</a></p>
+            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved.
+                | <a href="../views/contact.php" style="color: #ffbb00ff;">Liên hệ</a></p>
         </div>
     </footer>
 

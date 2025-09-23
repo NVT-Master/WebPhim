@@ -57,11 +57,32 @@ while ($row = $seatsResult->fetch_assoc()) {
     <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        html,
         body {
+            height: 100%;
+            margin: 0;
             background: linear-gradient(135deg, #0f0f0f 0%, #2d3436 100%);
             color: #fff;
-            font-family: 'Poppins', sans-serif;
+            font-family: "Poppins", sans-serif;
             overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
         }
 
         .navbar {
@@ -333,7 +354,8 @@ while ($row = $seatsResult->fetch_assoc()) {
                     </form>
                     <div class="auth-buttons">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                            <a class="nav-link" href="../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i> Đăng
+                            <a class="nav-link" href="../../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i>
+                                Đăng
                                 xuất</a>
                         <?php else: ?>
                             <a class="nav-link" href="../auth/login.php"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
@@ -406,8 +428,11 @@ while ($row = $seatsResult->fetch_assoc()) {
     </div>
 
     <!-- Footer -->
-    <footer class="text-center py-4 mt-5" style="background:#1a1a1a; border-top: 3px solid #ffbb00ff;">
-        <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved.</p>
+    <footer>
+        <div class="container">
+            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved.
+                | <a href="../../views/contact.php" style="color: #ffbb00ff;">Liên hệ</a></p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

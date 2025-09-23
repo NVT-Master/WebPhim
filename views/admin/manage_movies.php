@@ -23,10 +23,32 @@ unset($_SESSION['success'], $_SESSION['errors']);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="../../css/style.css" rel="stylesheet">
     <style>
+        html,
         body {
-            font-family: 'Poppins', sans-serif;
+            height: 100%;
+            margin: 0;
             background: linear-gradient(135deg, #0f0f0f 0%, #2d3436 100%);
             color: #fff;
+            font-family: "Poppins", sans-serif;
+            overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
         }
 
         .navbar {
@@ -160,12 +182,15 @@ unset($_SESSION['success'], $_SESSION['errors']);
                             lý Phim</a></li>
                     <li class="nav-item"><a class="nav-link" href="manage_showtimes.php"><i
                                 class="fas fa-calendar-alt"></i> Quản Lịch Chiếu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="manage_rooms.php"><i class="fas fa-door-open"></i>
+                            Quản lý Phòng</a></li>
                     <li class="nav-item"><a class="nav-link" href="manage_users.php"><i class="fas fa-users"></i> Người
                             Dùng</a></li>
                 </ul>
                 <div class="d-flex align-items-center">
                     <div class="auth-buttons">
-                        <a class="nav-link" href="../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i> Đăng
+                        <a class="nav-link" href="../../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i>
+                            Đăng
                             xuất</a>
                     </div>
                 </div>
@@ -177,6 +202,7 @@ unset($_SESSION['success'], $_SESSION['errors']);
             </li>
         </div>
     </nav>
+
 
     <div class="container my-5">
         <h2 class="text-center admin-heading">🎬 Quản lý Phim</h2>

@@ -32,6 +32,35 @@ $conn->close();
     <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: linear-gradient(135deg, #0f0f0f 0%, #2d3436 100%);
+            color: #fff;
+            font-family: "Poppins", sans-serif;
+            overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -65,7 +94,8 @@ $conn->close();
                     </form>
                     <div class="auth-buttons">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                            <a class="nav-link" href="../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i> Đăng
+                            <a class="nav-link" href="../../handle/logout_process.php"><i class="fas fa-sign-out-alt"></i>
+                                Đăng
                                 xuất</a>
                         <?php else: ?>
                             <a class="nav-link" href="../auth/login.php"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
@@ -85,10 +115,11 @@ $conn->close();
         </div>
     </div>
 
+    <!-- Footer -->
     <footer>
         <div class="container">
-            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved. | <a href="../contact.php"
-                    style="color: #ffbb00ff;">Liên hệ</a></p>
+            <p>Copyright © <?= date("Y") ?> MovieBooking. All rights reserved.
+                | <a href="../../views/contact.php" style="color: #ffbb00ff;">Liên hệ</a></p>
         </div>
     </footer>
 
