@@ -33,7 +33,7 @@ CREATE TABLE `booking_items` (
   KEY `seat_id` (`seat_id`),
   CONSTRAINT `booking_items_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE,
   CONSTRAINT `booking_items_ibfk_2` FOREIGN KEY (`seat_id`) REFERENCES `seats` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `booking_items` (
 
 LOCK TABLES `booking_items` WRITE;
 /*!40000 ALTER TABLE `booking_items` DISABLE KEYS */;
-INSERT INTO `booking_items` VALUES (8,6,1,80000.00),(9,7,2,80000.00),(10,8,9,96000.00),(11,9,3,80000.00),(12,10,17,180000.00);
+INSERT INTO `booking_items` VALUES (26,22,1,90000.00),(27,23,1,80000.00);
 /*!40000 ALTER TABLE `booking_items` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-23  5:09:18
+-- Dump completed on 2025-09-24  0:04:48
